@@ -7,13 +7,8 @@ export default {
     username: process.env.USER_DB,
     password: process.env.PASS_DB,
     database: process.env.NAME_DB,
+    port: 5432,
     define: {
         timestamps: true,
     },
-    xuse_env_variable: 'DATABASE_URL',
-    dialectOptions: {
-        options: {
-          encrypt: true
-        }
-    },
-}
+};
