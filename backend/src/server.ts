@@ -5,23 +5,21 @@ import publicRoutes from "./routes/public";
 import adminRoutes from "./routes/admin";
 import requestLogger from "./middleware/Request.logger";
 
-dotenv.config();
+import UserController from "./controllers/User.controller";
 
-class App {
-  constructor() {
-    this.init();
-  }
+import App from "./app";
+import bodyParser from "body-parser";
 
-  init(): void {
-    const app: Application = express();
+const app = new App({
+  port: 3000,
+  controllers: [
+    new UserController(),
+  ],
+  middleWares: [
+    bodyParser.json(),
+    bodyParser.urlencoded({extended: true}),
+    requestLogger
+  ]
+})
 
-    app.use(requestLogger);
-    app.use("/public", publicRoutes);
-    app.use("/admin", adminRoutes);
-
-    const PORT: string | number = process.env.PORT || 3333;
-    app.listen(PORT, () => console.log("Server on port: " + PORT));
-  }
-}
-
-export default App;
+app.listen();
