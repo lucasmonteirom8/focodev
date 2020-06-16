@@ -1,0 +1,4 @@
+# Prisma Migrate lockfile v1
+
+20200616140100-create-database
+20200616140415-update-type

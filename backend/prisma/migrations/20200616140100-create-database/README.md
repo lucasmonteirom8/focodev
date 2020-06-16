@@ -1,0 +1,120 @@
+# Migration `20200616140100-create-database`
+
+This migration has been generated at 6/16/2020, 2:01:00 PM.
+You can check out the [state of the schema](./schema.prisma) after the migration.
+
+## Database Steps
+
+```sql
+CREATE TABLE "public"."User" (
+"birthday" timestamp(3)   ,"created_at" timestamp(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,"email" text  NOT NULL ,"id" SERIAL,"password" text  NOT NULL ,"updated_at" timestamp(3)   DEFAULT CURRENT_TIMESTAMP,"username" text  NOT NULL ,
+    PRIMARY KEY ("id"))
+
+CREATE TABLE "public"."Type" (
+"id" SERIAL,"type" text  NOT NULL ,
+    PRIMARY KEY ("id"))
+
+CREATE TABLE "public"."Post" (
+"content" text  NOT NULL ,"created_at" timestamp(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,"fk_author" integer  NOT NULL ,"id" SERIAL,"title" text  NOT NULL ,"updated_at" timestamp(3)   DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("id"))
+
+CREATE TABLE "public"."Categories_posts" (
+"fk_category" integer  NOT NULL ,"fk_post" integer  NOT NULL ,"id" SERIAL,
+    PRIMARY KEY ("id"))
+
+CREATE TABLE "public"."Category" (
+"created_at" timestamp(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,"description" text  NOT NULL ,"id" SERIAL,"slug" text  NOT NULL ,"updated_at" timestamp(3)   DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("id"))
+
+CREATE TABLE "public"."Comment" (
+"content" text  NOT NULL ,"created_at" timestamp(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP,"fk_user" integer  NOT NULL ,"id" SERIAL,"postId" integer   ,"updated_at" timestamp(3)   DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY ("id"))
+
+CREATE UNIQUE INDEX "User.email" ON "public"."User"("email")
+
+ALTER TABLE "public"."Post" ADD FOREIGN KEY ("fk_author")REFERENCES "public"."User"("id") ON DELETE CASCADE  ON UPDATE CASCADE
+
+ALTER TABLE "public"."Categories_posts" ADD FOREIGN KEY ("fk_category")REFERENCES "public"."Category"("id") ON DELETE CASCADE  ON UPDATE CASCADE
+
+ALTER TABLE "public"."Categories_posts" ADD FOREIGN KEY ("fk_post")REFERENCES "public"."Post"("id") ON DELETE CASCADE  ON UPDATE CASCADE
+
+ALTER TABLE "public"."Comment" ADD FOREIGN KEY ("fk_user")REFERENCES "public"."User"("id") ON DELETE CASCADE  ON UPDATE CASCADE
+
+ALTER TABLE "public"."Comment" ADD FOREIGN KEY ("postId")REFERENCES "public"."Post"("id") ON DELETE SET NULL  ON UPDATE CASCADE
+```
+
+## Changes
+
+```diff
+diff --git schema.prisma schema.prisma
+migration ..20200616140100-create-database
+--- datamodel.dml
++++ datamodel.dml
+@@ -1,0 +1,64 @@
++// This is your Prisma schema file,
++// learn more about it in the docs: https://pris.ly/d/prisma-schema
++
++datasource db {
++  provider = "postgresql"
++  url      = env("DATABASE_URL")
++}
++
++generator client {
++  provider = "prisma-client-js"
++}
++
++model User {
++  id          Int       @id @default(autoincrement())
++  username    String
++  email       String    @unique
++  password    String
++  birthday    DateTime?
++  created_at  DateTime  @default(now())
++  updated_at  DateTime? @default(now())
++  //fk_type     Int
++  //type        Type      @relation(fields: [fk_type], references: [id])
++}
++
++model Type {
++  id          Int       @id @default(autoincrement())
++  type        String
++}
++
++model Post {
++  id          Int       @id @default(autoincrement())
++  title       String
++  content     String
++  created_at  DateTime  @default(now())
++  updated_at  DateTime? @default(now())
++  fk_author   Int
++  author      User      @relation(fields: [fk_author], references: [id])
++  comments    Comment[]
++}
++
++model Categories_posts {
++  id          Int       @id @default(autoincrement())
++  fk_category Int
++  category    Category  @relation(fields: [fk_category], references: [id])
++  fk_post     Int
++  post        Post  @relation(fields: [fk_post], references: [id])
++}
++
++model Category {
++  id          Int       @id @default(autoincrement())
++  slug        String
++  description String
++  created_at  DateTime  @default(now())
++  updated_at  DateTime? @default(now()) 
++}
++
++model Comment {
++  id          Int       @id @default(autoincrement())
++  content     String
++  created_at  DateTime  @default(now())
++  updated_at  DateTime? @default(now())
++  fk_user     Int
++  user        User      @relation(fields: [fk_user], references: [id]) 
++}
+```
+
+

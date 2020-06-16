@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url = "***"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  username    String
+  email       String    @unique
+  password    String
+  birthday    DateTime?
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @default(now())
+  //fk_type     Int
+  //type        Type      @relation(fields: [fk_type], references: [id])
+}
+
+model Type {
+  id          Int       @id @default(autoincrement())
+  type        String
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  title       String
+  content     String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @default(now())
+  fk_author   Int
+  author      User      @relation(fields: [fk_author], references: [id])
+  comments    Comment[]
+}
+
+model Categories_posts {
+  id          Int       @id @default(autoincrement())
+  fk_category Int
+  category    Category  @relation(fields: [fk_category], references: [id])
+  fk_post     Int
+  post        Post  @relation(fields: [fk_post], references: [id])
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  slug        String
+  description String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @default(now()) 
+}
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  content     String
+  created_at  DateTime  @default(now())
+  updated_at  DateTime? @default(now())
+  fk_user     Int
+  user        User      @relation(fields: [fk_user], references: [id]) 
+}

@@ -1,5 +1,8 @@
 import express, { Request, Response, Router } from 'express';
 import InterfaceControllers from './Interface.controller';
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 class User implements InterfaceControllers{
     
@@ -11,26 +14,37 @@ class User implements InterfaceControllers{
     }
 
     public initRoutes(){
-        this.router.get('/', this.index)
+        this.router.get('/', this.index);
+        this.router.post('/test', this.post);
     }
 
-    index = (req: Request, res: Response) => {
-
+    index = async (req: Request, res: Response) => {
+        const allUser = await prisma.user.findMany();
+        
+        console.log(JSON.stringify(allUser));
     }
 
-    delete = (req: Request, res: Response) => {
-
-    }
-
-    update = (req: Request, res: Response) => {
-
-    }
-
-    post = (req: Request, res: Response) => {
+    delete = async (req: Request, res: Response) => {
 
     }
 
-    get = (req: Request, res: Response) => {
+    update = async (req: Request, res: Response) => {
+
+    }
+
+    post = async  (req: Request, res: Response) => {
+        const { user_type } = req.body;
+
+        const createdType = await prisma.type.create({
+            data: user_type
+        }).then(() => {
+            res.status(200).send({ message: "create type successfully", body: createdType });
+        }).catch((err) => {
+            res.status(400).send({ message: "error to create"})
+        })
+    }
+
+    get = async (req: Request, res: Response) => {
 
     }
 }

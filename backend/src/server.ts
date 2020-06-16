@@ -13,7 +13,7 @@ import bodyParser from "body-parser";
 const app = new App({
   port: 3000,
   controllers: [
-    new UserController(),
+    new UserController()
   ],
   middleWares: [
     bodyParser.json(),
