@@ -1,4 +1,3 @@
 # Prisma Migrate lockfile v1
 
-20200616140100-create-database
-20200616140415-update-type
+20200616153418-created-database-lake-from-ui-path-overloaded-methods
