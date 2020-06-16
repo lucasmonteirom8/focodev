@@ -1,12 +1,14 @@
 import {Request, Response, NextFunction} from 'express';
 
 const requestLogger = (req: Request, res: Response, next: NextFunction ) => {
-    console.info(`${req.method} ${req.originalUrl}`);
+    res.on('error', (e) => {
+        console.log(e)
+    });
     const start = new Date().getTime();
     res.on('finish', () => {
         const elapsed = new Date().getTime() - start;
         console.info(`Requested Logged => ${req.method} ${req.path} ${req.originalUrl} ${res.statusCode} ${elapsed}ms`)
-    })
+    });
     next();
 };
 
