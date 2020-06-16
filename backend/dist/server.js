@@ -3,13 +3,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = __importDefault(require("express"));
-var dotenv_1 = __importDefault(require("dotenv"));
-var public_1 = __importDefault(require("./routes/public"));
-var admin_1 = __importDefault(require("./routes/admin"));
-dotenv_1.default.config();
-var app = express_1.default();
-app.use("/public", public_1.default);
-app.use("/admin", admin_1.default);
-var PORT = process.env.PORT || 3333;
-app.listen(PORT, function () { return console.log('Server on port: ' + PORT); });
+var Request_logger_1 = __importDefault(require("./middleware/Request.logger"));
+var User_controller_1 = __importDefault(require("./controllers/User.controller"));
+var app_1 = __importDefault(require("./app"));
+var body_parser_1 = __importDefault(require("body-parser"));
+var app = new app_1.default({
+    port: 3000,
+    controllers: [
+        new User_controller_1.default(),
+    ],
+    middleWares: [
+        body_parser_1.default.json(),
+        body_parser_1.default.urlencoded({ extended: true }),
+        Request_logger_1.default
+    ]
+});
+app.listen();
